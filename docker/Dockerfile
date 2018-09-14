@@ -19,3 +19,5 @@ ENV LANG=C.UTF-8
 
 RUN mkdir -p /opt/app
 COPY --from=build /export/ /opt/app
+
+CMD ["/opt/app/smcrawl_cli", "-h"]

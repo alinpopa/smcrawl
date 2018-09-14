@@ -1,7 +1,4 @@
-.PHONY: build test cli clean clean-deps docker-build docker-run
-
-#VSN := $(shell git describe --always --dirty)
-VSN := latest
+.PHONY: build test cli clean clean-deps
 
 all: test cli
 
@@ -20,9 +17,3 @@ clean:
 
 clean-deps:
 	-rm -rf deps
-
-docker-build:
-	docker build -f docker/Dockerfile -t smcrawl:$(VSN) .
-
-docker-run:
-	docker run -it --rm smcrawl:$(VSN)

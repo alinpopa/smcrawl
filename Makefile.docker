@@ -1,0 +1,11 @@
+.PHONY: build run
+
+VSN := $(shell git describe --always --dirty)
+
+all: build
+
+build:
+	docker build -f docker/Dockerfile -t smcrawl:$(VSN) .
+
+run:
+	docker run -it --rm smcrawl:$(VSN)
