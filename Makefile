@@ -3,6 +3,8 @@
 all: test cli
 
 build:
+	mix local.hex --force
+	mix local.rebar --force
 	mix deps.get && mix compile
 
 test: build
