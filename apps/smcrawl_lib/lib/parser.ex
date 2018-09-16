@@ -1,3 +1,3 @@
 defmodule Smcrawl.Lib.Parser do
-  defstruct url: nil
+  defstruct http: nil, exclude: []
 end

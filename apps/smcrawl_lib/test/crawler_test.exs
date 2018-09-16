@@ -4,8 +4,7 @@ defmodule Smcrawl.Lib.CrawlerTest do
   alias Smcrawl.Lib.Crawler
 
   test "create crawler with default values" do
-    assert %Crawler{depth: 10, frequency: 0, dispatcher: nil, parser: nil, url: nil} ==
-             Crawler.make()
+    assert %Crawler{dispatcher: nil} == Crawler.make()
   end
 
   test "should create crawler with nil dispatcher when passing the unsupported type" do
@@ -16,11 +15,21 @@ defmodule Smcrawl.Lib.CrawlerTest do
     assert %Crawler{dispatcher: %{}} == Crawler.make() |> Crawler.with_dispatcher(%{})
   end
 
-  test "should create crawler with nil parser when passing the unsupported type" do
-    assert %Crawler{parser: nil} == Crawler.make() |> Crawler.with_parser([])
-  end
+  test "should return an empty sitemap when nothing to crawl" do
+    start = fn ->
+      task =
+        Task.async(fn ->
+          Process.exit(self(), {:done, []})
+        end)
 
-  test "should create crawler with custom parser when providing the right protocol implementation" do
-    assert %Crawler{parser: %{}} == Crawler.make() |> Crawler.with_parser(%{})
+      task.pid
+    end
+
+    result =
+      Crawler.make()
+      |> Crawler.with_dispatcher(%{start: start})
+      |> Crawler.sync()
+
+    assert result == {:ok, []}
   end
 end
