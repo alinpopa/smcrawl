@@ -28,7 +28,7 @@ defmodule Smcrawl.Lib.Dispatcher.ProcTest do
       async(dispatcher)
       |> Task.await(:infinity)
 
-    assert {:ok, %SiteMap{urls: %{"http://test" => %MapSet{}}}} == result
+    assert {:ok, %SiteMap{urls: %{{1, "http://test"} => %MapSet{}}}} == result
   end
 
   test "return a sitemap with a single link for the given url" do
@@ -45,7 +45,7 @@ defmodule Smcrawl.Lib.Dispatcher.ProcTest do
       async(dispatcher)
       |> Task.await(:infinity)
 
-    {:ok, %SiteMap{urls: %{"http://test" => links}}} = result
+    {:ok, %SiteMap{urls: %{{1, "http://test"} => links}}} = result
     assert MapSet.size(links) == 1
     assert MapSet.member?(links, "one1")
   end
@@ -53,7 +53,7 @@ defmodule Smcrawl.Lib.Dispatcher.ProcTest do
   test "should parse all available urls as long as the given depth was not reached" do
     links = %{
       "http://test" => [%{orig_url: "http://test", url: "one1", level: 2}],
-      "one1" => [%{orig_url: "one1", url: "one2", level: 2}]
+      "one1" => [%{orig_url: "one1", url: "one2", level: 3}]
     }
 
     run = fn req -> Map.get(links, req.url, []) end
@@ -64,7 +64,7 @@ defmodule Smcrawl.Lib.Dispatcher.ProcTest do
       async(dispatcher)
       |> Task.await(:infinity)
 
-    {:ok, %SiteMap{urls: %{"http://test" => links1, "one1" => links2}}} = result
+    {:ok, %SiteMap{urls: %{{1, "http://test"} => links1, {2, "one1"} => links2}}} = result
     assert MapSet.size(links1) == 1
     assert MapSet.member?(links1, "one1")
     assert MapSet.size(links2) == 1
@@ -74,7 +74,7 @@ defmodule Smcrawl.Lib.Dispatcher.ProcTest do
   test "should not parse urls that have been parsed before" do
     links = %{
       "http://test" => [%{orig_url: "http://test", url: "one1", level: 2}],
-      "one1" => [%{orig_url: "one1", url: "one2", level: 2}]
+      "one1" => [%{orig_url: "one1", url: "one2", level: 3}]
     }
 
     run = fn req -> Map.get(links, req.url, []) end
@@ -90,7 +90,7 @@ defmodule Smcrawl.Lib.Dispatcher.ProcTest do
       async(dispatcher)
       |> Task.await(:infinity)
 
-    {:ok, %SiteMap{urls: urls = %{"http://test" => links}}} = result
+    {:ok, %SiteMap{urls: urls = %{{1, "http://test"} => links}}} = result
     assert Enum.count(Map.keys(urls)) == 1
     assert MapSet.size(links) == 1
     assert MapSet.member?(links, "one1")
@@ -112,7 +112,7 @@ defmodule Smcrawl.Lib.Dispatcher.ProcTest do
       async(dispatcher)
       |> Task.await(:infinity)
 
-    {:ok, %SiteMap{urls: urls = %{"http://test" => links1, "one1" => links2, "one2" => links3}}} =
+    {:ok, %SiteMap{urls: urls = %{{1, "http://test"} => links1, {2, "one1"} => links2, {3, "one2"} => links3}}} =
       result
 
     assert Enum.count(Map.keys(urls)) == 3

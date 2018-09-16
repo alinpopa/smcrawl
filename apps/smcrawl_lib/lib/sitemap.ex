@@ -27,9 +27,13 @@ defmodule Smcrawl.Lib.SiteMap do
 
   def render(sitemap) do
     sitemap.urls
-    |> Enum.each(fn {url, links} ->
-      IO.puts("Page: #{url}")
-      links |> Enum.each(&IO.puts(" -> #{&1}"))
+    |> Map.to_list()
+    |> Enum.sort(fn {{level_a, _}, _}, {{level_b, _}, _} ->
+      level_a < level_b
+    end)
+    |> Enum.each(fn {{_level, url}, links} ->
+      IO.puts("📄 #{url}")
+      links |> Enum.each(&IO.puts("   🔗 #{&1}"))
     end)
   end
 end

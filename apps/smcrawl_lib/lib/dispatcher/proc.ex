@@ -35,7 +35,7 @@ defmodule Smcrawl.Lib.Dispatcher.Proc do
   def init(state) do
     Process.flag(:trap_exit, true)
     queue = [{1, state.url}]
-    sitemap = state.sitemap |> SiteMap.put(state.url, nil)
+    sitemap = state.sitemap |> SiteMap.put({1, state.url}, nil)
 
     {:ok, :ready, %State{state | available: state.max, queue: queue, sitemap: sitemap},
      [{:state_timeout, state.freq, :do}]}
@@ -74,7 +74,7 @@ defmodule Smcrawl.Lib.Dispatcher.Proc do
   def handle_event(:info, {_, {:task_result, work}}, _, state) do
     {queue, set, sitemap} =
       Enum.reduce(work, {state.queue, state.set, state.sitemap}, fn e, {queue, set, sitemap} ->
-        sitemap = sitemap |> SiteMap.put(e.orig_url, e.url)
+        sitemap = sitemap |> SiteMap.put({e.level - 1, e.orig_url}, e.url)
 
         case Set.exists?(set, e.url) do
           true -> {queue, set, sitemap}
