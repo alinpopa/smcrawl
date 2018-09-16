@@ -20,4 +20,4 @@ ENV LANG=C.UTF-8
 RUN mkdir -p /opt/app
 COPY --from=build /export/ /opt/app
 
-CMD ["/opt/app/smcrawl_cli", "-h"]
+CMD ["/opt/app/smcrawl_cli", "-u", "https://monzo.com", "-d", "3", "-e", "cdn-cgi/l/email-protection"]
