@@ -112,8 +112,10 @@ defmodule Smcrawl.Lib.Dispatcher.ProcTest do
       async(dispatcher)
       |> Task.await(:infinity)
 
-    {:ok, %SiteMap{urls: urls = %{{1, "http://test"} => links1, {2, "one1"} => links2, {3, "one2"} => links3}}} =
-      result
+    {:ok,
+     %SiteMap{
+       urls: urls = %{{1, "http://test"} => links1, {2, "one1"} => links2, {3, "one2"} => links3}
+     }} = result
 
     assert Enum.count(Map.keys(urls)) == 3
     assert MapSet.size(links1) == 1

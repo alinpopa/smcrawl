@@ -2,7 +2,7 @@ defmodule Smcrawl.Lib.Dispatcher.Proc do
   @behaviour :gen_statem
 
   defmodule State do
-    defstruct max: 3,
+    defstruct max: 10,
               available: 0,
               queue: [],
               url: nil,
@@ -38,7 +38,7 @@ defmodule Smcrawl.Lib.Dispatcher.Proc do
     sitemap = state.sitemap |> SiteMap.put({1, state.url}, nil)
 
     {:ok, :ready, %State{state | available: state.max, queue: queue, sitemap: sitemap},
-     [{:state_timeout, state.freq, :do}]}
+     [{:state_timeout, 0, :do}]}
   end
 
   def callback_mode() do
